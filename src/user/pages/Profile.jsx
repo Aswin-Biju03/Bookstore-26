@@ -3,6 +3,10 @@ import Header from "../components/Header";
 import Footer from "../../Components/Footer";
 import { FaCircleCheck } from "react-icons/fa6";
 import { useState } from "react";
+import Edit from "../components/Edit";
+import UploadBook from "../components/UploadBook";
+import BookStatus from "../components/BookStatus";
+import Purchase from "../Purchase";
 
 function Profile() {
   const [currentTab, setCurrentTab] = useState(1);
@@ -31,7 +35,7 @@ function Profile() {
           <h1 className="font-bold md:text-3xl text-2xl">Username</h1>
           <FaCircleCheck className="text-blue-500 ms-3 text-2xl" />
         </div>
-        edit
+        <Edit />
       </div>
       <p className="text-justify md:px-20 px-5 my-5">
         This is your personal space where you can manage your account, explore
@@ -74,9 +78,21 @@ function Profile() {
             Purchase History
           </p>
         </div>
-        {currentTab == 1 && <div>Upload Books</div>}
-        {currentTab == 2 && <div>Uploaded Book Status</div>}
-        {currentTab == 3 && <div>Purchase History</div>}
+        {currentTab == 1 && (
+          <div>
+            <UploadBook />
+          </div>
+        )}
+        {currentTab == 2 && (
+          <div>
+            <BookStatus />
+          </div>
+        )}
+        {currentTab == 3 && (
+          <div>
+            <Purchase />
+          </div>
+        )}
       </div>
       <Footer />
     </>
