@@ -36,7 +36,7 @@ function App() {
           element={isLoading ? <Preloader /> : <AdminDashboard />}
         />
         <Route path="/admin/resources" element={<AdminResources />} />
-        <Route path="/admin/setting" element={<AdminSettings />} />
+        <Route path="/admin/settings" element={<AdminSettings />} />
         <Route path="/*" element={<Pnf />} />
       </Routes>
     </>
