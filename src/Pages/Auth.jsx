@@ -1,9 +1,42 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash, FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { registerAPI } from "../services/allAPI";
 
 function Auth({ insideRegister }) {
   const [togglePasswordType, setTogglePasswordType] = useState(false);
+
+  const formik = useFormik({
+    initialValues: {
+      username: "",
+      email: "",
+      password: "",
+    },
+    validationSchema: Yup.object({
+      username: Yup.string()
+        .min(3, "Must be atleast 3 characters")
+        .required("Required"),
+      email: Yup.string().email("Invalid email").required("Required"),
+      password: Yup.string().required("Required"),
+    }),
+    onSubmit: (values) => {
+      console.log(values);
+      if (insideRegister) {
+        console.log("register api call");
+        handleRegister(values);
+      } else {
+        console.log("Login api call");
+      }
+    },
+  });
+
+  const handleRegister = async (userData) => {
+    const result = await registerAPI(userData);
+    console.log(result);
+  };
+
   return (
     <div className="w-full min-h-screen flex justify-center items-center bg-[url(/background.png)] bg-cover bg-center text-white">
       <div className="p-10">
@@ -19,21 +52,38 @@ function Auth({ insideRegister }) {
             <FaUser className="text-3xl" />
           </div>
           <h1 className="text-2xl">{insideRegister ? "Register" : "Login"}</h1>
-          <form className="my-5 w-full">
+          <form onSubmit={formik.handleSubmit} className="my-5 w-full">
             {insideRegister && (
-              <input
-                className="bg-white p-2 w-full rounded my-3 text-black"
-                type="text"
-                placeholder="Username"
-              />
+              <>
+                <input
+                  name="username"
+                  value={formik.values.username}
+                  onChange={formik.handleChange}
+                  className="bg-white p-2 w-full rounded my-3 text-black"
+                  type="text"
+                  placeholder="Username"
+                />
+                <div className="mb-2 text-yellow-600 text-sm">
+                  {formik.errors.username}
+                </div>
+              </>
             )}
             <input
+              name="email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
               className="bg-white p-2 w-full rounded my-3 text-black"
               type="text"
               placeholder="Email"
             />
+            <div className="mb-2 text-yellow-600 text-sm">
+              {formik.errors.email}
+            </div>
             <div className="flex items-center">
               <input
+                name="password"
+                value={formik.values.password}
+                onChange={formik.handleChange}
                 className="bg-white p-2 w-full rounded my-3 text-black"
                 type={togglePasswordType ? "text" : "password"}
                 placeholder="Password"
@@ -52,6 +102,9 @@ function Auth({ insideRegister }) {
                 />
               )}
             </div>
+            <div className="mb-2 text-yellow-600 text-sm">
+              {formik.errors.password}
+            </div>
             <div className="flex justify-between mb-5">
               <p className="text-xs text-orange-300">
                 Never Share Your Password With Others
@@ -62,7 +115,10 @@ function Auth({ insideRegister }) {
             </div>
             <div className="text-center">
               {insideRegister ? (
-                <button className="bg-green-600 p-2 w-full rounded">
+                <button
+                  type="submit"
+                  className="bg-green-600 p-2 w-full rounded"
+                >
                   Register
                 </button>
               ) : (
@@ -81,10 +137,21 @@ function Auth({ insideRegister }) {
             )}
             <div className="mt-5 text-center">
               {insideRegister ? (
-                <p className="text-blue-500"> Existing User ?<Link to={"/login"} className="underline ms-5"> Login</Link>{" "}</p>
+                <p className="text-blue-500">
+                  {" "}
+                  Existing User ?
+                  <Link to={"/login"} className="underline ms-5">
+                    {" "}
+                    Login
+                  </Link>{" "}
+                </p>
               ) : (
                 <p className="text-blue-500">
-                  New User ?<Link to={"/register"} className="underline ms-5"> Register</Link>{" "}
+                  New User ?
+                  <Link to={"/register"} className="underline ms-5">
+                    {" "}
+                    Register
+                  </Link>{" "}
                 </p>
               )}
             </div>
