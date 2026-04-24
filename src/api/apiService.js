@@ -9,7 +9,7 @@ const apiService = async (httpMethod, url, reqBody, reqHeader) => {
   };
   try {
     const response = await axiosInstance(reqConfig);
-    const response;
+    return response;
   } catch (err) {
     return err;
   }
