@@ -3,8 +3,10 @@ import { FaEye, FaEyeSlash, FaUser } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { loginAPI, registerAPI } from "../services/allAPI";
+import { googleLoginAPI, loginAPI, registerAPI } from "../services/allAPI";
 import { ToastContainer, toast } from "react-toastify";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 
 function Auth({ insideRegister }) {
   const [togglePasswordType, setTogglePasswordType] = useState(false);
@@ -62,6 +64,31 @@ function Auth({ insideRegister }) {
       }, 2500);
     } else {
       toast.error(result.response);
+    }
+  };
+
+  const handleGoogleLogin = async (credentialResponse) => {
+    console.log("Inside handleGoogleLogin", credentialResponse);
+    const { email, name, picture } = jwtDecode(credentialResponse.credential);
+    console.log(email, name, picture);
+
+    const result = await googleLoginAPI({
+      username: name,
+      email,
+      password: "googlePassword",
+      picture,
+    });
+    if (result.status == 200) {
+      toast.success("Login Successfull...");
+      sessionStorage.setItem("token", result.data.token);
+      sessionStorage.setItem("user", JSON.stringify(result.data.user));
+      setTimeout(() => {
+        if (result.data.user.role == "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
+      }, 2500);
     }
   };
 
@@ -162,7 +189,14 @@ function Auth({ insideRegister }) {
               <div className="my-5 text-center">
                 <p>--------------------or --------------------</p>
                 <div className="mt-2 flex justify-center items-center w-full">
-                  Google Authentication
+                  <GoogleLogin
+                    onSuccess={(credentialResponse) => {
+                      handleGoogleLogin(credentialResponse);
+                    }}
+                    onError={() => {
+                      console.log("Login Failed");
+                    }}
+                  />
                 </div>
               </div>
             )}

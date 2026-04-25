@@ -1,10 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaBars, FaFacebook, FaInstagram, FaUser } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 
 function Header() {
   const [toggle, setToggle] = useState(false);
+  const [token, setToken] = useState("");
+  const [dp, setDp] = useState("");
+
+  useEffect(() => {
+    if (sessionStorage.getItem("token") && sessionStorage.getItem("user")) {
+      const userToken = sessionStorage.getItem("token");
+      const user = JSON.parse(sessionStorage.getItem("user"));
+      setToken(userToken);
+      setDp(user.picture);
+      console.log(token);
+    }
+  }, [token]);
   return (
     <>
       <div className="grid grid-cols-3 p-3">
@@ -38,13 +50,33 @@ function Header() {
           <button onClick={() => setToggle(!toggle)}>
             <FaBars />
           </button>
-          <Link
-            to={"/login"}
-            className="border border-black rounded px-3 py-2 ms-3 flex items-center hover:bg-black hover:text-white"
-          >
-            <FaUser className="me-1" />
-            Login
-          </Link>
+          {!token ? (
+            <Link
+              to={"/login"}
+              className="border border-black rounded px-3 py-2 ms-3 flex items-center hover:bg-black hover:text-white"
+            >
+              <FaUser className="me-1" /> Login
+            </Link>
+          ) : (
+            <div>
+              {/* profile icon */}
+              <button className="shadow-sm rounded ms-5 p-1 hover:bg-gray-100">
+                <img
+                  width={"40px"}
+                  height={"40px"}
+                  style={{ borderRadius: "50%" }}
+                  src={
+                    dp == ""
+                      ? "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_1280.png"
+                      : dp
+                  }
+                  alt="profile icon"
+                />
+              </button>
+
+              {/* dropdown menu */}
+            </div>
+          )}
         </div>
         <ul className={toggle ? "flex flex-col" : "md:flex hidden"}>
           <li>
