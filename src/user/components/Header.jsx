@@ -8,6 +8,7 @@ import {
 } from "react-icons/fa";
 import { FaGear, FaXTwitter } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import axiosInstance from "../../api/axiosInstance";
 
 function Header() {
   const [toggle, setToggle] = useState(false);
@@ -74,7 +75,9 @@ function Header() {
                   src={
                     dp == ""
                       ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-                      : dp
+                      : dp.startsWith("https://lh3.googleusercontent.com/")
+                        ? dp
+                        : `${axiosInstance.defaults.baseURL}/uploads/${dp}`
                   }
                   alt="profile icon"
                 />
@@ -130,7 +133,9 @@ function Header() {
                   src={
                     dp == ""
                       ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-                      : dp
+                      : dp.startsWith("https://lh3.googleusercontent.com/")
+                        ? dp
+                        : `${axiosInstance.defaults.baseURL}/uploads/${dp}`
                   }
                   alt="profile icon"
                 />

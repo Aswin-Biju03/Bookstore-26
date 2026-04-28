@@ -7,6 +7,7 @@ import Edit from "../components/Edit";
 import UploadBook from "../components/UploadBook";
 import BookStatus from "../components/BookStatus";
 import Purchase from "../Purchase";
+import axiosInstance from "../../api/axiosInstance";
 
 function Profile() {
   const [currentTab, setCurrentTab] = useState(1);
@@ -41,7 +42,9 @@ function Profile() {
           src={
             dp == ""
               ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-              : dp
+              : dp.startsWith("https://lh3.googleusercontent.com/")
+                ? dp
+                : `${axiosInstance.defaults.baseURL}/uploads/${dp}`
           }
           alt=""
         />
@@ -53,9 +56,7 @@ function Profile() {
         </div>
         <Edit />
       </div>
-      <p className="text-justify md:px-20 px-5 my-5">✨
-        {bio}
-      </p>
+      <p className="text-justify md:px-20 px-5 my-5">✨{bio}</p>
       <div className="md:px-40">
         <div className="flex justify-center items-center my-8 font-medium text-lg">
           <p
