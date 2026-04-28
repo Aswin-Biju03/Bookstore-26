@@ -1,25 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { FaBars, FaFacebook, FaInstagram, FaUser } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import {
+  FaBars,
+  FaFacebook,
+  FaInstagram,
+  FaPowerOff,
+  FaUser,
+} from "react-icons/fa";
+import { FaGear, FaXTwitter } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 
 function Header() {
   const [toggle, setToggle] = useState(false);
   const [token, setToken] = useState("");
   const [dp, setDp] = useState("");
+  const [userId, setUserId] = useState("");
+  const [dropDown, setDropDown] = useState(false);
 
   useEffect(() => {
     if (sessionStorage.getItem("token") && sessionStorage.getItem("user")) {
       const userToken = sessionStorage.getItem("token");
       const user = JSON.parse(sessionStorage.getItem("user"));
       setToken(userToken);
-      setDp(user.picture);
-      console.log(token);
+      setDp(user?.picture);
+      setUserId(user?._id);
     }
   }, [token]);
+
   return (
     <>
+      {/* Header top part */}
       <div className="grid grid-cols-3 p-3">
+        {/* logo */}
         <div className="flex items-center">
           <img
             width={"50px"}
@@ -29,23 +40,69 @@ function Header() {
           />
           <h1 className="text-2xl font-bold ms-2 md:hidden">BOOKSTORE</h1>
         </div>
+        {/* title */}
         <div className="md:flex justify-center items-center hidden">
           <h1 className="text-3xl font-bold">BOOK STORE</h1>
         </div>
-        <div className="md:flex items-center justify-end hidden ">
+
+        {/* icons */}
+        <div className="md:flex items-center justify-end hidden">
           <FaInstagram className=" text-2xl" />
           <FaFacebook className="mx-2 text-2xl" />
           <FaXTwitter className=" text-2xl" />
-          <Link
-            to={"/login"}
-            className="border border-black rounded px-3 py-2 ms-3 flex items-center hover:bg-black hover:text-white"
-          >
-            <FaUser className="me-1" />
-            Login
-          </Link>
+          {/* login link */}
+          {!token ? (
+            <Link
+              to={"/login"}
+              className="border border-black rounded px-3 py-2 ms-3 flex items-center hover:bg-black hover:text-white"
+            >
+              {" "}
+              <FaUser className="me-1" />
+              Login
+            </Link>
+          ) : (
+            <div className="relative">
+              {/* profile icon */}
+              <button
+                onClick={() => setDropDown(!dropDown)}
+                className="shadow-sm rounded ms-5 p-1 hover:bg-gray-100"
+              >
+                <img
+                  width={"40px"}
+                  height={"40px"}
+                  style={{ borderRadius: "50%" }}
+                  src={
+                    dp == ""
+                      ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                      : dp
+                  }
+                  alt="profile icon"
+                />
+              </button>
+              {/* dropdown menu */}
+              {dropDown && (
+                <div className="absolute right-0 z-10 mt-2 w-40 bg-white shadow rounded ring-1 ring-black/5 p-2 focus:outline-hidden">
+                  <Link
+                    to={`/profile/${userId}`}
+                    className="flex items-center text-sm px-3 py-2"
+                  >
+                    <FaGear className="me-2"></FaGear>Profile
+                  </Link>
+                  <button className="flex items-center text-gray-800 text-sm px-3 py-2">
+                    {" "}
+                    <FaPowerOff className="me-2" />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Navigation part */}
       <nav className="bg-black w-full p-3 text-white md:flex justify-center items-center">
+        {/* menu & login @ small screen */}
         <div className="flex justify-between items-center text-2xl md:hidden">
           <button onClick={() => setToggle(!toggle)}>
             <FaBars />
@@ -55,26 +112,45 @@ function Header() {
               to={"/login"}
               className="border border-black rounded px-3 py-2 ms-3 flex items-center hover:bg-black hover:text-white"
             >
-              <FaUser className="me-1" /> Login
+              {" "}
+              <FaUser className="me-1" />
+              Login
             </Link>
           ) : (
-            <div>
+            <div className="relative">
               {/* profile icon */}
-              <button className="shadow-sm rounded ms-5 p-1 hover:bg-gray-100">
+              <button
+                onClick={() => setDropDown(!dropDown)}
+                className="shadow-sm rounded ms-5 p-1 hover:bg-gray-100"
+              >
                 <img
                   width={"40px"}
                   height={"40px"}
                   style={{ borderRadius: "50%" }}
                   src={
                     dp == ""
-                      ? "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_1280.png"
+                      ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
                       : dp
                   }
                   alt="profile icon"
                 />
               </button>
-
               {/* dropdown menu */}
+              {dropDown && (
+                <div className="absolute right-0 z-10 mt-2 w-40 bg-white shadow rounded ring-1 ring-black/5 p-2 focus:outline-hidden">
+                  <Link
+                    to={`/profile/${userId}`}
+                    className="flex items-center text-sm px-3 py-2 text-gray-800"
+                  >
+                    <FaGear className="me-2"></FaGear>Profile
+                  </Link>
+                  <button className="flex items-center text-gray-800 text-sm px-3 py-2">
+                    {" "}
+                    <FaPowerOff className="me-2" />
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

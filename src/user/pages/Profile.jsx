@@ -2,7 +2,7 @@ import React from "react";
 import Header from "../components/Header";
 import Footer from "../../Components/Footer";
 import { FaCircleCheck } from "react-icons/fa6";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Edit from "../components/Edit";
 import UploadBook from "../components/UploadBook";
 import BookStatus from "../components/BookStatus";
@@ -10,6 +10,18 @@ import Purchase from "../Purchase";
 
 function Profile() {
   const [currentTab, setCurrentTab] = useState(1);
+  const [username, setUsername] = useState("");
+  const [dp, setDp] = useState("");
+  const [bio, setBio] = useState("");
+
+  useEffect(() => {
+    if (sessionStorage.getItem("token") && sessionStorage.getItem("user")) {
+      const user = JSON.parse(sessionStorage.getItem("user"));
+      setDp(user?.picture);
+      setUsername(user?.username);
+      setBio(user?.bio);
+    }
+  }, []);
   return (
     <>
       <Header />
@@ -26,24 +38,23 @@ function Profile() {
       >
         <img
           style={{ width: "200px", height: "200px", borderRadius: "50%" }}
-          src="https://media.creativemornings.com/uploads/user/avatar/49419/Bechtel_Profile_Square.jpg"
+          src={
+            dp == ""
+              ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+              : dp
+          }
           alt=""
         />
       </div>
       <div className="md:flex justify-between px-20 mt-5">
         <div className="flex items-center">
-          <h1 className="font-bold md:text-3xl text-2xl">Username</h1>
+          <h1 className="font-bold md:text-3xl text-2xl">{username}</h1>
           <FaCircleCheck className="text-blue-500 ms-3 text-2xl" />
         </div>
         <Edit />
       </div>
-      <p className="text-justify md:px-20 px-5 my-5">
-        This is your personal space where you can manage your account, explore
-        your reading activity, track your orders, and save books you love.
-        Whether you're building a wishlist, discovering new arrivals, or
-        reviewing your recent purchases, this page keeps everything organized
-        and easy to access. Your reading journey continues here — enjoy
-        exploring, discovering, and collecting stories that inspire you. ✨
+      <p className="text-justify md:px-20 px-5 my-5">✨
+        {bio}
       </p>
       <div className="md:px-40">
         <div className="flex justify-center items-center my-8 font-medium text-lg">
