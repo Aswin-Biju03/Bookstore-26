@@ -5,6 +5,19 @@ const axiosInstance = axios.create({
   timeout: 5000,
 });
 
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = sessionStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
 axiosInstance.interceptors.response.use(
   (response) => {
     console.log("Response Received !! ");
@@ -14,7 +27,7 @@ axiosInstance.interceptors.response.use(
     if (error.response) {
       const status = error.response.status;
       if (status == 401) {
-        console.log("Unauthorised Access - Redirect to login !!");
+        console.log("Unauthorised Access - Invalid Token!!!");
       } else if (status == 404) {
         console.log("API Not Found");
       } else if (status == 500) {
