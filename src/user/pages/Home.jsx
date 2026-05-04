@@ -1,10 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../../Components/Footer";
 import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { getHomePageBooksAPI } from "../../services/allAPI";
 
 function Home() {
+  const [homeBooks, setHomeBooks] = useState([]);
+  console.log(homeBooks);
+
+  useEffect(() => {
+    getHomePageBooks();
+  }, []);
+
+  const getHomePageBooks = async () => {
+    const result = await getHomePageBooksAPI();
+    if (result.status == 200) {
+      setHomeBooks(result.data);
+    }
+  };
   return (
     <>
       <Header />
@@ -35,19 +49,29 @@ function Home() {
         <h1 className="text-3xl font-bold my-3">NEW ARRIVALS</h1>
         <h1 className="text-4xl my-2">Explore Our Latest Collection</h1>
         <div className="md:grid grid-cols-4 w-full my-10">
-          <div className="shadow rounded p-3 m-4 md:my-0">
-            <img
-              width={"100%"}
-              height={"300px"}
-              src="https://m.media-amazon.com/images/I/81R2N4PRuUL._AC_UF1000,1000_QL80_.jpg"
-              alt="book"
-            />
-            <div className="flex flex-col justify-center items-center mt-4">
-              <h2 className="text-blue-700 font-bold text-xl">Author</h2>
-              <h3 className="text-lg">Title</h3>
-              <p className="font-bold text-red-500">price</p>
-            </div>
-          </div>
+          {homeBooks.length > 0 ? (
+            homeBooks?.map((book) => (
+              <div key={book?._id} className="shadow rounded p-3 m-4 md:my-0">
+                <img
+                  width={"100%"}
+                  height={"300px"}
+                  src={book?.imageURL}
+                  alt="book"
+                />
+                <div className="flex flex-col justify-center items-center mt-4">
+                  <h2 className="text-blue-700 font-bold text-xl">
+                    {book?.author}
+                  </h2>
+                  <h3 className="text-lg">{book.title}</h3>
+                  <p className="font-bold text-red-500">
+                    {book?.discountPrice}
+                  </p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="font-bold text-center my-3">Loading.....</p>
+          )}
         </div>
         <div className="text-center my-10">
           <Link to={"/books"} className="bg-black text-white font-bold p-3">

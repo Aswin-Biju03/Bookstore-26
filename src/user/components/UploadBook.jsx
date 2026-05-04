@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { FaPlus } from "react-icons/fa";
+import { ToastContainer, toast } from "react-toastify";
+import { addBookAPI } from "../../services/allAPI";
 
 function UploadBook() {
   const [bookDetails, setBookDetails] = useState({
@@ -17,6 +19,7 @@ function UploadBook() {
     uploadImages: [],
   });
   const [preview, setPreview] = useState("");
+  const [previewList, setPreviewList] = useState([]);
 
   console.log(bookDetails);
 
@@ -27,6 +30,80 @@ function UploadBook() {
     setBookDetails({ ...bookDetails, uploadImages: uploadBookImageArray });
     const url = URL.createObjectURL(imageFile);
     setPreview(url);
+    const demoPreviewList = previewList;
+    demoPreviewList.push(url);
+    setPreviewList(demoPreviewList);
+  };
+
+  const resetForm = () => {
+    setBookDetails({
+      title: "",
+      author: "",
+      pages: "",
+      imageURL: "",
+      price: "",
+      discountPrice: "",
+      abstract: "",
+      publisher: "",
+      isbn: "",
+      language: "",
+      category: "",
+      uploadImages: [],
+    });
+    setPreview("");
+    setPreviewList([]);
+  };
+
+  const handleAddBook = async () => {
+    const {
+      title,
+      author,
+      pages,
+      imageURL,
+      price,
+      discountPrice,
+      abstract,
+      publisher,
+      isbn,
+      language,
+      category,
+      uploadImages,
+    } = bookDetails;
+    if (
+      !title ||
+      !author ||
+      !imageURL ||
+      !pages ||
+      !price ||
+      !discountPrice ||
+      !abstract ||
+      !publisher ||
+      !isbn ||
+      !language ||
+      !category ||
+      uploadImages.length == 0
+    ) {
+      toast.info("Please fill the form completely");
+    } else {
+      const reqBody = new FormData();
+      for (let key in bookDetails) {
+        if (key != uploadImages) {
+          reqBody.append(key, bookDetails[key]);
+        } else {
+          bookDetails.uploadImages.forEach((imageFile) => {
+            reqBody.append("uploadImages", imageFile);
+          });
+        }
+      }
+      const result = await addBookAPI(reqBody);
+      console.log(result);
+      if (result.status == 201) {
+        toast.success("Book Added Successfully");
+      } else {
+        toast.warning(result.response);
+      }
+      resetForm();
+    }
   };
 
   return (
@@ -182,28 +259,45 @@ function UploadBook() {
           </div>
           {preview && (
             <div className="flex justify-center items-center mt-10">
-              <img
-                width={"70px"}
-                height={"70px"}
-                src="https://m.media-amazon.com/images/I/81R2N4PRuUL._AC_UF1000,1000_QL80_.jpg"
-                alt="book"
-              />
-              <label htmlFor="bookUpload">
-                <input hidden type="file" id="bookUpload" />
-                <FaPlus className="text-3xl ms-2" />
-              </label>
+              {previewList?.map((imageURL, index) => (
+                <img
+                  key={`${imageURL}-${index}`}
+                  width={"70px"}
+                  height={"70px"}
+                  src={imageURL}
+                  alt="book"
+                />
+              ))}
+              {previewList.length < 3 && (
+                <label htmlFor="bookUpload">
+                  <input
+                    onChange={(e) => handleUploadBookImage(e)}
+                    hidden
+                    type="file"
+                    id="bookUpload"
+                  />
+                  <FaPlus className="text-3xl ms-2" />
+                </label>
+              )}
             </div>
           )}
           <div className="flex md:justify-end justify-center w-full px-5 mt-5 gap-3">
-            <button className="bg-gray-600 text-white py-2 px-3 rounded hover:text-gray-600 hover:bg-white">
+            <button
+              onClick={resetForm}
+              className="bg-gray-600 text-white py-2 px-3 rounded hover:text-gray-600 hover:bg-white"
+            >
               Reset
             </button>
-            <button className="bg-blue-600 text-white py-2 px-3 rounded hover:text-blue-600 hover:bg-white">
+            <button
+              onClick={handleAddBook}
+              className="bg-blue-600 text-white py-2 px-3 rounded hover:text-blue-600 hover:bg-white"
+            >
               ADD BOOK DETAILS
             </button>
           </div>
         </div>
       </div>
+      <ToastContainer position="top-center" theme="colored" autoClose={3000} />
     </div>
   );
 }
