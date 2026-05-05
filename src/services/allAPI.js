@@ -24,8 +24,8 @@ export const getHomePageBooksAPI = async () => {
   return await apiService("GET", `/home-books`, {});
 };
 
-export const getAllBooksAPI = async () => {
-  return await apiService("GET", `/all-books`, {});
+export const getAllBooksAPI = async (searchKey = "") => {
+  return await apiService("GET", `/all-books?search=${searchKey}`, {});
 };
 
 export const getAllUserBooksAPI = async () => {
@@ -36,3 +36,10 @@ export const getAllUserBoughtBooksAPI = async () => {
   return await apiService("GET", `/bought-books`, {});
 };
 
+export const getViewBookAPI = async (id) => {
+  return await apiService("GET", `/books/${id}`, {});
+};
+
+export const deleteUserUploadBookAPI = async (id) => {
+  return await apiService("DELETE", `/books/${id}`, {});
+};
