@@ -43,3 +43,7 @@ export const getViewBookAPI = async (id) => {
 export const deleteUserUploadBookAPI = async (id) => {
   return await apiService("DELETE", `/books/${id}`, {});
 };
+
+export const buyBookAPI = async (id) => {
+  return await apiService("PUT", `/books/${id}/buy`, {});
+};

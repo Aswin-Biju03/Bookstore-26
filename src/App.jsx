@@ -14,6 +14,8 @@ import AdminSettings from "./admin/pages/AdminSettings";
 import Auth from "./Pages/Auth";
 import Pnf from "./Pages/Pnf";
 import Preloader from "./Components/Preloader";
+import PaymentSuccess from "./user/pages/PaymentSuccess";
+import PaymentFail from "./user/pages/PaymentFail";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -28,8 +30,11 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/books" element={<Books />} />
         <Route path="/login" element={<Auth />} />
-        <Route path="/register" element={<Auth  insideRegister/>} />
+        <Route path="/register" element={<Auth insideRegister />} />
+
         <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/success" element={<PaymentSuccess />} />
+        <Route path="/cancel" element={<PaymentFail />} />
         <Route path="/books/:id" element={<View />} />
         <Route
           path="/admin"

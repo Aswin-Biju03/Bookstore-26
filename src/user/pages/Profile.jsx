@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import Edit from "../components/Edit";
 import UploadBook from "../components/UploadBook";
 import BookStatus from "../components/BookStatus";
-import Purchase from "../Purchase";
+import Purchase from "../pages/Purchase";
 import axiosInstance from "../../api/axiosInstance";
 
 function Profile() {

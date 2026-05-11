@@ -13,8 +13,7 @@ function Books() {
   const [allBooks, setAllBooks] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [dummyAllBooks, setDummyAllBooks] = useState([]);
-
-  // console.log(categoryList);
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   useEffect(() => {
     const userToken = sessionStorage.getItem("token");
@@ -26,22 +25,21 @@ function Books() {
 
   const getBooks = async () => {
     const result = await getAllBooksAPI(searchKey);
-    console.log(result);
-
     if (result.status == 200) {
-      setAllBooks(result.data);
-      setDummyAllBooks(result.data);
-      const tempCategoryList = result.data.map((item) => item.category);
-      console.log(tempCategoryList);
+      const fetchedBooks = result.data;
+      setDummyAllBooks(fetchedBooks);
+      setAllBooks(fetchedBooks);
+      const tempCategoryList = fetchedBooks.map((item) => item.category);
       setCategoryList([...new Set(tempCategoryList)]);
     }
   };
 
   const filterBooks = (category) => {
-    if (category != "all") {
-      setAllBooks(dummyAllBooks?.filter((book) => book.category == category));
+    setSelectedCategory(category);
+    if (category !== "all") {
+      setAllBooks(dummyAllBooks.filter((book) => book.category === category));
     } else {
-      getBooks();
+      setAllBooks(dummyAllBooks);
     }
   };
 
@@ -54,7 +52,6 @@ function Books() {
           {/* Search Section */}
           <div className="flex flex-col justify-center items-center my-5">
             <h1 className="text-3xl font-bold my-5">All Books</h1>
-
             <div className="flex my-5">
               <input
                 value={searchKey}
@@ -84,7 +81,8 @@ function Books() {
               <div className={toggle ? "block" : "hidden md:block"}>
                 <div className="mt-3">
                   <input
-                    onClick={() => filterBooks("all")}
+                    onChange={() => filterBooks("all")}
+                    checked={selectedCategory === "all"}
                     type="radio"
                     name="filter"
                     id="all"
@@ -97,7 +95,8 @@ function Books() {
                 {categoryList?.map((category) => (
                   <div key={category} className="mt-3">
                     <input
-                      onClick={() => filterBooks(category)}
+                      onChange={() => filterBooks(category)}
+                      checked={selectedCategory === category}
                       type="radio"
                       name="filter"
                       id={category}
@@ -114,7 +113,7 @@ function Books() {
             <div className="col-span-3">
               <div className="md:grid grid-cols-4 w-full my-10">
                 {allBooks?.length > 0 ? (
-                  allBooks?.map((book) => (
+                  allBooks.map((book) => (
                     <div
                       key={book?._id}
                       className="shadow rounded p-3 m-4 md:my-0"
@@ -140,7 +139,7 @@ function Books() {
                     </div>
                   ))
                 ) : (
-                  <div className="text-center my-5 font-bold">
+                  <div className="text-center my-5 font-bold col-span-4">
                     Book Not Found !!!
                   </div>
                 )}

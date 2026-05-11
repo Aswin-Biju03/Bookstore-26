@@ -3,8 +3,9 @@ import Header from "../components/Header";
 import Footer from "../../Components/Footer";
 import { FaBackward, FaCamera, FaEye } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
-import { getViewBookAPI } from "../../services/allAPI";
+import { buyBookAPI, getViewBookAPI } from "../../services/allAPI";
 import axiosInstance from "../../api/axiosInstance";
+import { loadStripe } from "@stripe/stripe-js";
 
 function View() {
   const [modal, setModal] = useState(false);
@@ -27,6 +28,14 @@ function View() {
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const makePayment = async () => {
+    const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PK);
+    console.log(stripe);
+    const result = await buyBookAPI(id);
+    const { checkOutURL } = result.data;
+    window.location.href = checkOutURL;
   };
 
   return (
@@ -96,7 +105,10 @@ function View() {
                     Back
                   </Link>
 
-                  <button className="bg-green-800 text-white p-2 font-black ms-5">
+                  <button
+                    onClick={makePayment}
+                    className="bg-green-800 text-white p-2 font-black ms-5"
+                  >
                     Buy ₹{book.price}
                   </button>
                 </div>
