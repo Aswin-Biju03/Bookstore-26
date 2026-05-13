@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000",
-  timeout: 5000,
+  baseURL: "https://bookstore-26-backend-1.onrender.com",
+  timeout: 10000,
 });
 
 axiosInstance.interceptors.request.use(

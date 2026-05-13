@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   FaBars,
   FaFacebook,
@@ -7,8 +7,9 @@ import {
   FaUser,
 } from "react-icons/fa";
 import { FaGear, FaXTwitter } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
+import { routeContext } from "../../contextAPI/RouteGuardContent";
 
 function Header() {
   const [toggle, setToggle] = useState(false);
@@ -16,6 +17,9 @@ function Header() {
   const [dp, setDp] = useState("");
   const [userId, setUserId] = useState("");
   const [dropDown, setDropDown] = useState(false);
+  const navigate = useNavigate();
+  const { role, setRole, authorisedUser, setAuthorisedUser } =
+    useContext(routeContext);
 
   useEffect(() => {
     if (sessionStorage.getItem("token") && sessionStorage.getItem("user")) {
@@ -26,6 +30,17 @@ function Header() {
       setUserId(user?._id);
     }
   }, [token]);
+
+  const logout = () => {
+    sessionStorage.clear();
+    setAuthorisedUser(false);
+    setToggle(false);
+    setToken("");
+    setUserId("");
+    setDp("");
+    setDropDown(false);
+    navigate("/");
+  };
 
   return (
     <>
@@ -91,7 +106,7 @@ function Header() {
                   >
                     <FaGear className="me-2"></FaGear>Profile
                   </Link>
-                  <button className="flex items-center text-gray-800 text-sm px-3 py-2">
+                  <button  onClick={logout} className="flex items-center text-gray-800 text-sm px-3 py-2">
                     {" "}
                     <FaPowerOff className="me-2" />
                     Logout
@@ -149,7 +164,10 @@ function Header() {
                   >
                     <FaGear className="me-2"></FaGear>Profile
                   </Link>
-                  <button className="flex items-center text-gray-800 text-sm px-3 py-2">
+                  <button
+                    onClick={logout}
+                    className="flex items-center text-gray-800 text-sm px-3 py-2"
+                  >
                     {" "}
                     <FaPowerOff className="me-2" />
                     Logout

@@ -47,3 +47,7 @@ export const deleteUserUploadBookAPI = async (id) => {
 export const buyBookAPI = async (id) => {
   return await apiService("PUT", `/books/${id}/buy`, {});
 };
+
+export const getBookDetailsAPI = async (title) => {
+  return await apiService("POST", `/books-ai`, { title });
+};
